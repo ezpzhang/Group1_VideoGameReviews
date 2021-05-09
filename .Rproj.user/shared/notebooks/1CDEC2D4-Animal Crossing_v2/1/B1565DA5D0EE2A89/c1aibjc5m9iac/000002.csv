@@ -1,0 +1,3 @@
+"0","# Random Forest with mtry = sqrt(818) ~ 28, ntree = 500"
+"0","fituser.rf <- randomForest(judgment~., user.reviewtree, mtry = 28, ntree = 500)"
+"0","plot(fituser.rf)"

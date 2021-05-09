@@ -1,0 +1,7 @@
+"0","knitr::opts_chunk$set(echo = FALSE)"
+"0","library(tidyverse)"
+"0","library(RColorBrewer)"
+"0","library(wordcloud)"
+"0","if(!require(""tensorflow"")) install.packages(""tensorflow"")"
+"0","library(tensorflow)"
+"0","if(!require(""keras"")) install.packages(""keras"")"

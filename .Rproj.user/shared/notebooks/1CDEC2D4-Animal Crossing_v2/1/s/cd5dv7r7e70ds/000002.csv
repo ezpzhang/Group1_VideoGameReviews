@@ -1,0 +1,5 @@
+"0","# First, we run simple trees for users and critics without splitting the data."
+"0","pacman::p_load(tree, rpart, randomForest, ranger, rattle, pROC, partykit, ggplot2, glmnet, lda, data.table, ISLR)"
+"0",""
+"0","fit.usertree <- tree(judgment~., user.reviewtree, control = tree.control(nrow(user.reviewtree), mindev = 0.005))"
+"0","plot(fit.usertree)"

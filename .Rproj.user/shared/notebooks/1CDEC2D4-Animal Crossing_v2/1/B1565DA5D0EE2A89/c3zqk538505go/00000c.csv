@@ -1,0 +1,15 @@
+"0","fitcritic.roc <- roc(data.test$judgment, predict.rf[,2])"
+"2","Setting levels: control = 0, case = 1
+"
+"2","Setting direction: controls < cases
+"
+"0","pROC::auc(fitcritic.roc) #AUC = 0.5707 from Randomforest"
+"1","Area under the curve: "
+"1",""
+"1","0.5707"
+"1",""
+"1",""
+"1",""
+"1","
+"
+"0","#The AUC for the Randomforest generated tree for critic reviews is 0.5707. "

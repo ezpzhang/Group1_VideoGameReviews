@@ -1,0 +1,5 @@
+"0",""
+"0","weekdays_user <- weekdays(user.reviews$date) # get weekdays for each review  "
+"0","months_user <- months(user.reviews$date)   # get months "
+"0",""
+"0","par(mfrow=c(1,2))"

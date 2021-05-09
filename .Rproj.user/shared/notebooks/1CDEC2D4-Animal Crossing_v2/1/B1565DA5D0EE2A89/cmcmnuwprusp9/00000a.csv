@@ -1,0 +1,3 @@
+"0","baduser.word <- names(baduser.fre)"
+"0","wordcloud(baduser.word, baduser.fre, "
+"0","          color=coruser.special2, ordered.colors=F)"

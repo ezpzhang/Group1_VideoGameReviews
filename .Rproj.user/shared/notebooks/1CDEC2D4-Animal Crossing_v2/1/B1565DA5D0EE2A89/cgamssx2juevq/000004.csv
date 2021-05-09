@@ -1,0 +1,5 @@
+"0","fituser.roc <- roc(data.test$judgment, predict.rf[,2], plot=TRUE)  # Ok"
+"2","Setting levels: control = 0, case = 1
+"
+"2","Setting direction: controls < cases
+"

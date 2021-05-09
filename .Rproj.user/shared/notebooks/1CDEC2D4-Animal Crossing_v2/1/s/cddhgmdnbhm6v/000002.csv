@@ -1,0 +1,470 @@
+"0","#Neural Net Stuff User use the DTM table..."
+"0","#Getting a fresh read so we keep 0 and 1s as numerics"
+"0","user.reviewsint <- data.table::fread(""data/user_reviews.csv"", stringsAsFactors = F)"
+"0","user.reviewsint$judgment <- c(0)"
+"0","user.reviewsint$judgment[user.reviews$grade >= 80] <- 1"
+"0","class(user.reviewsint$judgment)"
+"1","[1]"
+"1"," ""numeric"""
+"1","
+"
+"0","#format should be userID, rating, bunch of terms and freq"
+"0","userfreq <- as.matrix(userdtm.10) #starting with smaller set, words appearing in 1% of documents"
+"0","dim(userfreq)"
+"1","[1]"
+"1"," 2999"
+"1","  823"
+"1","
+"
+"0","class(userfreq[1,3])"
+"1","[1]"
+"1"," ""numeric"""
+"1","
+"
+"0","class(user.reviews$judgment)"
+"1","[1]"
+"1"," ""factor"""
+"1","
+"
+"0","levels(user.reviews$judgment)"
+"1","[1]"
+"1"," ""0"""
+"1"," ""1"""
+"1","
+"
+"0","which(colnames(userfreq)==""..."") #2 has the ..."
+"1","[1]"
+"1"," 2"
+"1","
+"
+"0","colnames(userfreq)[2] <- ""pural_ellipses"""
+"0",""
+"0","#also need to remove special characters like spaces from column names"
+"0","names(userfreq)<-str_replace_all(names(userfreq), c("" "" = ""."" , "","" = """" ))"
+"0",""
+"0","userfreq <- cbind.data.frame(user.reviewsint$judgment,userfreq)#combine user info, ratings, date, etc"
+"0","colnames(userfreq)[1] <- ""judgment"""
+"0",""
+"0","#userfreq$judgment <- as.numeric(userfreq$judgment)"
+"0","#userfreq <- as.matrix(userfreq)"
+"0",""
+"0",""
+"0","##DATA SPLIT"
+"0","set.seed(701)  # for the purpose of reproducibility"
+"0","nkuser <- nrow(userfreq)"
+"0","validationuser.index <- sample(nkuser, 0.3*nkuser)"
+"0","length(validationuser.index)   # reserve 899"
+"1","[1]"
+"1"," 899"
+"1","
+"
+"0","userreview3.val <- userfreq[validationuser.index,] # reserve 899"
+"0","## validation input/y - this time it is not binomial of good or bad but the actual rating"
+"0","userreview3_xval <- as.matrix(userreview3.val[, -1])  # make sure it it is a matrix"
+"0",""
+"0","userreview3_yval <- as.matrix(userreview3.val[, 1]) # make sure it it is a matrix"
+"0",""
+"0","userreview3_xtrain <- userfreq[-validationuser.index, -1]   #dim(data3_xtrain)"
+"0","userreview3_ytrain <- as.numeric(userfreq[-validationuser.index, 1])   "
+"0","userreview3_xtrain <- as.matrix(userreview3_xtrain) # make sure it it is a matrix"
+"0","userreview3_ytrain <- as.matrix(userreview3_ytrain) # make sure it it is a matrix"
+"0",""
+"0","#Converting stuff from number to character string. GOTTA FIX"
+"0",""
+"0","#KERAS Model"
+"0","library(keras)"
+"2","package ‘keras’ was built under R version 4.0.5"
+"0","puser <- dim(userreview3_xtrain)[2] # number of input variables"
+"0","modeluser <- keras_model_sequential() %>%"
+"0","  layer_dense(units = 16, activation = ""relu"", input_shape = c(puser)) %>% "
+"0","  # 1 layer with 16 neurons. default activation is relu"
+"0","  layer_dense(units = 8, activation = ""relu"") %>%  # layer 2 with 8 neurons"
+"0","  #layer_dense(units = 16, activation = ""relu"") %>% "
+"0","  #layer_dense(units = 512, activation = ""relu"") %>%"
+"0","  layer_dense(units = 2, activation = ""softmax"") # output"
+"2","No non-system installation of Python could be found.
+Would you like to download and install Miniconda?
+Miniconda is an open source environment management system for Python.
+See https://docs.conda.io/en/latest/miniconda.html for more details.
+
+"
+"0","Y"
+"2","* Downloading ""https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"" ...
+"
+"2","trying URL 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe'
+"
+"2","Content type 'application/octet-stream'"
+"2"," length 59801432 bytes (57.0 MB)
+"
+"2","downloaded 57.0 MB
+
+"
+"2","* Installing Miniconda -- please wait a moment ...
+"
+"1","Collecting package metadata (current_repodata.json): ...working... done
+"
+"1","Solving environment: ...working... done
+"
+"1","
+"
+"1","## Package Plan ##
+"
+"1","
+"
+"1","  environment location: C:\Users\peter\AppData\Local\R-MINI~1
+"
+"1","
+"
+"1","  added / updated specs:
+"
+"1","    - conda
+"
+"1","
+"
+"1","
+"
+"1","The following packages will be downloaded:
+"
+"1","
+"
+"1","    package                    |            build
+"
+"1","    ---------------------------|-----------------
+"
+"1","    ca-certificates-2021.4.13  |       haa95532_1         115 KB
+"
+"1","    certifi-2020.12.5          |   py38haa95532_0         141 KB
+"
+"1","    cffi-1.14.5                |   py38hcd4344a_0         224 KB
+"
+"1","    chardet-4.0.0              |py38haa95532_1003         211 KB
+"
+"1","    conda-4.10.1               |   py38haa95532_1         2.9 MB
+"
+"1","    conda-package-handling-1.7.3|   py38h8cc25b3_1         721 KB
+"
+"1","    cryptography-3.4.7         |   py38h71e12ea_0         643 KB
+"
+"1","    idna-2.10                  |     pyhd3eb1b0_0          52 KB
+"
+"1","    openssl-1.1.1k             |       h2bbff1b_0         4.8 MB
+"
+"1","    pip-21.0.1                 |   py38haa95532_0         1.8 MB
+"
+"1","    pyopenssl-20.0.1           |     pyhd3eb1b0_1          49 KB
+"
+"1","    requests-2.25.1            |     pyhd3eb1b0_0          52 KB
+"
+"1","    ruamel_yaml-0.15.100       |   py38h2bbff1b_0         273 KB
+"
+"1","    setuptools-52.0.0          |   py38haa95532_0         726 KB
+"
+"1","    sqlite-3.35.4              |       h2bbff1b_0         761 KB
+"
+"1","    tqdm-4.59.0                |     pyhd3eb1b0_1          93 KB
+"
+"1","    urllib3-1.26.4             |     pyhd3eb1b0_0         105 KB
+"
+"1","    vc-14.2                    |       h21ff451_1           8 KB
+"
+"1","    vs2015_runtime-14.27.29016 |       h5e58377_2        1007 KB
+"
+"1","    wheel-0.36.2               |     pyhd3eb1b0_0          33 KB
+"
+"1","    ------------------------------------------------------------
+"
+"1","                                           Total:        14.6 MB
+"
+"1","
+"
+"1","The following packages will be REMOVED:
+"
+"1","
+"
+"1","  zlib-1.2.11-h62dcd97_4
+"
+"1","
+"
+"1","The following packages will be UPDATED:
+"
+"1","
+"
+"1","  ca-certificates                              2020.10.14-0 --> 2021.4.13-haa95532_1
+"
+"1","  certifi            pkgs/main/noarch::certifi-2020.6.20-p~ --> pkgs/main/win-64::certifi-2020.12.5-py38haa95532_0
+"
+"1","  cffi                                1.14.3-py38hcd4344a_2 --> 1.14.5-py38hcd4344a_0
+"
+"1","  chardet                           3.0.4-py38haa95532_1003 --> 4.0.0-py38haa95532_1003
+"
+"1","  conda                                4.9.2-py38haa95532_0 --> 4.10.1-py38haa95532_1
+"
+"1","  conda-package-han~                   1.7.2-py38h76e460a_0 --> 1.7.3-py38h8cc25b3_1
+"
+"1","  cryptography                         3.2.1-py38hcd4344a_1 --> 3.4.7-py38h71e12ea_0
+"
+"1","  openssl                                 1.1.1h-he774522_0 --> 1.1.1k-h2bbff1b_0
+"
+"1","  pip                                 20.2.4-py38haa95532_0 --> 21.0.1-py38haa95532_0
+"
+"1","  pyopenssl                             19.1.0-pyhd3eb1b0_1 --> 20.0.1-pyhd3eb1b0_1
+"
+"1","  requests                                      2.24.0-py_0 --> 2.25.1-pyhd3eb1b0_0
+"
+"1","  ruamel_yaml                        0.15.87-py38he774522_1 --> 0.15.100-py38h2bbff1b_0
+"
+"1","  setuptools                          50.3.1-py38haa95532_1 --> 52.0.0-py38haa95532_0
+"
+"1","  sqlite                                  3.33.0-h2a8f88b_0 --> 3.35.4-h2bbff1b_0
+"
+"1","  tqdm                                  4.51.0-pyhd3eb1b0_0 --> 4.59.0-pyhd3eb1b0_1
+"
+"1","  urllib3                                      1.25.11-py_0 --> 1.26.4-pyhd3eb1b0_0
+"
+"1","  vc                                        14.1-h0510ff6_4 --> 14.2-h21ff451_1
+"
+"1","  vs2015_runtime                     14.16.27012-hf0eaf9b_3 --> 14.27.29016-h5e58377_2
+"
+"1","  wheel                                 0.35.1-pyhd3eb1b0_0 --> 0.36.2-pyhd3eb1b0_0
+"
+"1","
+"
+"1","The following packages will be DOWNGRADED:
+"
+"1","
+"
+"1","  idna                                            2.10-py_0 --> 2.10-pyhd3eb1b0_0
+"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","Downloading and Extracting Packages
+"
+"1","ruamel_yaml-0.15.100 | 273 KB    |            |   0% ruamel_yaml-0.15.100 | 273 KB    | 5          |   6% ruamel_yaml-0.15.100 | 273 KB    | ########## | 100% ruamel_yaml-0.15.100 | 273 KB    | ########## | 100% 
+"
+"1","pyopenssl-20.0.1     | 49 KB     |            |   0% pyopenssl-20.0.1     | 49 KB     | ########## | 100% 
+"
+"1","tqdm-4.59.0          | 93 KB     |            |   0% tqdm-4.59.0          | 93 KB     | ########## | 100% tqdm-4.59.0          | 93 KB     | ########## | 100% 
+"
+"1","openssl-1.1.1k       | 4.8 MB    |            |   0% openssl-1.1.1k       | 4.8 MB    | ##5        |  25% openssl-1.1.1k       | 4.8 MB    | ########4  |  84% openssl-1.1.1k       | 4.8 MB    | ########## | 100% 
+"
+"1","wheel-0.36.2         | 33 KB     |            |   0% wheel-0.36.2         | 33 KB     | ########## | 100% 
+"
+"1","chardet-4.0.0        | 211 KB    |            |   0% chardet-4.0.0        | 211 KB    | ########## | 100% chardet-4.0.0        | 211 KB    | ########## | 100% 
+"
+"1","urllib3-1.26.4       | 105 KB    |            |   0% urllib3-1.26.4       | 105 KB    | ########## | 100% 
+"
+"1","vc-14.2              | 8 KB      |            |   0% vc-14.2              | 8 KB      | ########## | 100% 
+"
+"1","cffi-1.14.5          | 224 KB    |            |   0% cffi-1.14.5          | 224 KB    | ########## | 100% cffi-1.14.5          | 224 KB    | ########## | 100% 
+"
+"1","cryptography-3.4.7   | 643 KB    |            |   0% cryptography-3.4.7   | 643 KB    | ########## | 100% cryptography-3.4.7   | 643 KB    | ########## | 100% 
+"
+"1","setuptools-52.0.0    | 726 KB    |            |   0% setuptools-52.0.0    | 726 KB    | ########## | 100% setuptools-52.0.0    | 726 KB    | ########## | 100% 
+"
+"1","conda-4.10.1         | 2.9 MB    |            |   0% conda-4.10.1         | 2.9 MB    | ######3    |  64% conda-4.10.1         | 2.9 MB    | ########## | 100% conda-4.10.1         | 2.9 MB    | ########## | 100% 
+"
+"1","vs2015_runtime-14.27 | 1007 KB   |            |   0% vs2015_runtime-14.27 | 1007 KB   | ####7      |  48% vs2015_runtime-14.27 | 1007 KB   | ########## | 100% vs2015_runtime-14.27 | 1007 KB   | ########## | 100% 
+"
+"1","ca-certificates-2021 | 115 KB    |            |   0% ca-certificates-2021 | 115 KB    | ########## | 100% ca-certificates-2021 | 115 KB    | ########## | 100% 
+"
+"1","idna-2.10            | 52 KB     |            |   0% idna-2.10            | 52 KB     | ########## | 100% 
+"
+"1","sqlite-3.35.4        | 761 KB    |            |   0% sqlite-3.35.4        | 761 KB    | ########## | 100% sqlite-3.35.4        | 761 KB    | ########## | 100% 
+"
+"1","requests-2.25.1      | 52 KB     |            |   0% requests-2.25.1      | 52 KB     | ########## | 100% 
+"
+"1","pip-21.0.1           | 1.8 MB    |            |   0% pip-21.0.1           | 1.8 MB    | ########## | 100% pip-21.0.1           | 1.8 MB    | ########## | 100% 
+"
+"1","certifi-2020.12.5    | 141 KB    |            |   0% certifi-2020.12.5    | 141 KB    | ########## | 100% certifi-2020.12.5    | 141 KB    | ########## | 100% 
+"
+"1","conda-package-handli | 721 KB    |            |   0% conda-package-handli | 721 KB    | ########## | 100% conda-package-handli | 721 KB    | ########## | 100% 
+"
+"1","Preparing transaction: ...working... done
+"
+"1","Verifying transaction: ...working... done
+"
+"1","Executing transaction: ...working... done
+"
+"1","Collecting package metadata (current_repodata.json): ...working... done
+"
+"1","Solving environment: ...working... done
+"
+"1","
+"
+"1","## Package Plan ##
+"
+"1","
+"
+"1","  environment location: C:\Users\peter\AppData\Local\R-MINI~1\envs\r-reticulate
+"
+"1","
+"
+"1","  added / updated specs:
+"
+"1","    - numpy
+"
+"1","    - python=3.6
+"
+"1","
+"
+"1","
+"
+"1","The following packages will be downloaded:
+"
+"1","
+"
+"1","    package                    |            build
+"
+"1","    ---------------------------|-----------------
+"
+"1","    certifi-2020.12.5          |   py36ha15d459_1         144 KB  conda-forge
+"
+"1","    intel-openmp-2021.2.0      |     h57928b3_616         2.6 MB  conda-forge
+"
+"1","    libblas-3.9.0              |            9_mkl         4.0 MB  conda-forge
+"
+"1","    libcblas-3.9.0             |            9_mkl         4.0 MB  conda-forge
+"
+"1","    liblapack-3.9.0            |            9_mkl         4.0 MB  conda-forge
+"
+"1","    mkl-2021.2.0               |     hb70f87d_389       183.8 MB  conda-forge
+"
+"1","    numpy-1.19.5               |   py36hd1b969e_1         4.9 MB  conda-forge
+"
+"1","    pip-21.1.1                 |     pyhd8ed1ab_0         1.1 MB  conda-forge
+"
+"1","    python-3.6.13              |h39d44d4_0_cpython        19.0 MB  conda-forge
+"
+"1","    python_abi-3.6             |          1_cp36m           4 KB  conda-forge
+"
+"1","    setuptools-49.6.0          |   py36ha15d459_3         921 KB  conda-forge
+"
+"1","    tbb-2021.2.0               |       h2d74725_0         138 KB  conda-forge
+"
+"1","    vc-14.2                    |       hb210afc_4          13 KB  conda-forge
+"
+"1","    vs2015_runtime-14.28.29325 |       h5e1d092_4         2.3 MB  conda-forge
+"
+"1","    wheel-0.36.2               |     pyhd3deb0d_0          31 KB  conda-forge
+"
+"1","    wincertstore-0.2           |py36ha15d459_1006          15 KB  conda-forge
+"
+"1","    ------------------------------------------------------------
+"
+"1","                                           Total:       227.0 MB
+"
+"1","
+"
+"1","The following NEW packages will be INSTALLED:
+"
+"1","
+"
+"1","  certifi            conda-forge/win-64::certifi-2020.12.5-py36ha15d459_1
+"
+"1","  intel-openmp       conda-forge/win-64::intel-openmp-2021.2.0-h57928b3_616
+"
+"1","  libblas            conda-forge/win-64::libblas-3.9.0-9_mkl
+"
+"1","  libcblas           conda-forge/win-64::libcblas-3.9.0-9_mkl
+"
+"1","  liblapack          conda-forge/win-64::liblapack-3.9.0-9_mkl
+"
+"1","  mkl                conda-forge/win-64::mkl-2021.2.0-hb70f87d_389
+"
+"1","  numpy              conda-forge/win-64::numpy-1.19.5-py36hd1b969e_1
+"
+"1","  pip                conda-forge/noarch::pip-21.1.1-pyhd8ed1ab_0
+"
+"1","  python             conda-forge/win-64::python-3.6.13-h39d44d4_0_cpython
+"
+"1","  python_abi         conda-forge/win-64::python_abi-3.6-1_cp36m
+"
+"1","  setuptools         conda-forge/win-64::setuptools-49.6.0-py36ha15d459_3
+"
+"1","  tbb                conda-forge/win-64::tbb-2021.2.0-h2d74725_0
+"
+"1","  vc                 conda-forge/win-64::vc-14.2-hb210afc_4
+"
+"1","  vs2015_runtime     conda-forge/win-64::vs2015_runtime-14.28.29325-h5e1d092_4
+"
+"1","  wheel              conda-forge/noarch::wheel-0.36.2-pyhd3deb0d_0
+"
+"1","  wincertstore       conda-forge/win-64::wincertstore-0.2-py36ha15d459_1006
+"
+"1","
+"
+"1","
+"
+"1","
+"
+"1","Downloading and Extracting Packages
+"
+"1","libcblas-3.9.0       | 4.0 MB    |            |   0% libcblas-3.9.0       | 4.0 MB    |            |   0% libcblas-3.9.0       | 4.0 MB    | ##5        |  26% libcblas-3.9.0       | 4.0 MB    | ########6  |  86% libcblas-3.9.0       | 4.0 MB    | ########## | 100% 
+"
+"1","libblas-3.9.0        | 4.0 MB    |            |   0% libblas-3.9.0        | 4.0 MB    | #9         |  19% libblas-3.9.0        | 4.0 MB    | ########9  |  89% libblas-3.9.0        | 4.0 MB    | ########## | 100% 
+"
+"1","wincertstore-0.2     | 15 KB     |            |   0% wincertstore-0.2     | 15 KB     | ########## | 100% 
+"
+"1","python_abi-3.6       | 4 KB      |            |   0% python_abi-3.6       | 4 KB      | ########## | 100% 
+"
+"1","vs2015_runtime-14.28 | 2.3 MB    |            |   0% vs2015_runtime-14.28 | 2.3 MB    | ######8    |  68% vs2015_runtime-14.28 | 2.3 MB    | ########## | 100% vs2015_runtime-14.28 | 2.3 MB    | ########## | 100% 
+"
+"1","python-3.6.13        | 19.0 MB   |            |   0% python-3.6.13        | 19.0 MB   | 3          |   4% python-3.6.13        | 19.0 MB   | #8         |  19% python-3.6.13        | 19.0 MB   | ###3       |  34% python-3.6.13        | 19.0 MB   | ####9      |  49% python-3.6.13        | 19.0 MB   | ######4    |  64% python-3.6.13        | 19.0 MB   | #######8   |  79% python-3.6.13        | 19.0 MB   | #########3 |  93% python-3.6.13        | 19.0 MB   | ########## | 100% 
+"
+"1","certifi-2020.12.5    | 144 KB    |            |   0% certifi-2020.12.5    | 144 KB    | ########## | 100% certifi-2020.12.5    | 144 KB    | ########## | 100% 
+"
+"1","intel-openmp-2021.2. | 2.6 MB    |            |   0% intel-openmp-2021.2. | 2.6 MB    | #####2     |  53% intel-openmp-2021.2. | 2.6 MB    | ########## | 100% intel-openmp-2021.2. | 2.6 MB    | ########## | 100% 
+"
+"1","setuptools-49.6.0    | 921 KB    |            |   0% setuptools-49.6.0    | 921 KB    | ########## | 100% setuptools-49.6.0    | 921 KB    | ########## | 100% 
+"
+"1","liblapack-3.9.0      | 4.0 MB    |            |   0% liblapack-3.9.0      | 4.0 MB    | ###7       |  37% liblapack-3.9.0      | 4.0 MB    | ########## | 100% liblapack-3.9.0      | 4.0 MB    | ########## | 100% 
+"
+"1","wheel-0.36.2         | 31 KB     |            |   0% wheel-0.36.2         | 31 KB     | ########## | 100% 
+"
+"1","vc-14.2              | 13 KB     |            |   0% vc-14.2              | 13 KB     | ########## | 100% 
+"
+"1","pip-21.1.1           | 1.1 MB    |            |   0% pip-21.1.1           | 1.1 MB    | ########## | 100% pip-21.1.1           | 1.1 MB    | ########## | 100% 
+"
+"1","tbb-2021.2.0         | 138 KB    |            |   0% tbb-2021.2.0         | 138 KB    | ########## | 100% 
+"
+"1","numpy-1.19.5         | 4.9 MB    |            |   0% numpy-1.19.5         | 4.9 MB    | ###5       |  35% numpy-1.19.5         | 4.9 MB    | #########2 |  93% numpy-1.19.5         | 4.9 MB    | ########## | 100% 
+"
+"1","mkl-2021.2.0         | 183.8 MB  |            |   0% mkl-2021.2.0         | 183.8 MB  |            |   1% mkl-2021.2.0         | 183.8 MB  | 2          |   2% mkl-2021.2.0         | 183.8 MB  | 3          |   4% mkl-2021.2.0         | 183.8 MB  | 5          |   5% mkl-2021.2.0         | 183.8 MB  | 6          |   7% mkl-2021.2.0         | 183.8 MB  | 8          |   8% mkl-2021.2.0         | 183.8 MB  | #          |  10% mkl-2021.2.0         | 183.8 MB  | #1         |  12% mkl-2021.2.0         | 183.8 MB  | #3         |  13% mkl-2021.2.0         | 183.8 MB  | #4         |  15% mkl-2021.2.0         | 183.8 MB  | #6         |  16% mkl-2021.2.0         | 183.8 MB  | #7         |  18% mkl-2021.2.0         | 183.8 MB  | #9         |  19% mkl-2021.2.0         | 183.8 MB  | ##         |  21% mkl-2021.2.0         | 183.8 MB  | ##2        |  22% mkl-2021.2.0         | 183.8 MB  | ##3        |  24% mkl-2021.2.0         | 183.8 MB  | ##5        |  25% mkl-2021.2.0         | 183.8 MB  | ##6        |  27% mkl-2021.2.0         | 183.8 MB  | ##8        |  28% mkl-2021.2.0         | 183.8 MB  | ###        |  30% mkl-2021.2.0         | 183.8 MB  | ###1       |  32% mkl-2021.2.0         | 183.8 MB  | ###3       |  33% mkl-2021.2.0         | 183.8 MB  | ###4       |  35% mkl-2021.2.0         | 183.8 MB  | ###6       |  36% mkl-2021.2.0         | 183.8 MB  | ###7       |  38% mkl-2021.2.0         | 183.8 MB  | ###9       |  39% mkl-2021.2.0         | 183.8 MB  | ####1      |  41% mkl-2021.2.0         | 183.8 MB  | ####2      |  43% mkl-2021.2.0         | 183.8 MB  | ####4      |  44% mkl-2021.2.0         | 183.8 MB  | ####5      |  46% mkl-2021.2.0         | 183.8 MB  | ####7      |  47% mkl-2021.2.0         | 183.8 MB  | ####8      |  49% mkl-2021.2.0         | 183.8 MB  | #####      |  50% mkl-2021.2.0         | 183.8 MB  | #####1     |  52% mkl-2021.2.0         | 183.8 MB  | #####3     |  54% mkl-2021.2.0         | 183.8 MB  | #####5     |  55% mkl-2021.2.0         | 183.8 MB  | #####6     |  57% mkl-2021.2.0         | 183.8 MB  | #####8     |  58% mkl-2021.2.0         | 183.8 MB  | #####9     |  60% mkl-2021.2.0         | 183.8 MB  | ######1    |  61% mkl-2021.2.0         | 183.8 MB  | ######2    |  63% mkl-2021.2.0         | 183.8 MB  | ######4    |  65% mkl-2021.2.0         | 183.8 MB  | ######6    |  66% mkl-2021.2.0         | 183.8 MB  | ######7    |  68% mkl-2021.2.0         | 183.8 MB  | ######9    |  69% mkl-2021.2.0         | 183.8 MB  | #######    |  71% mkl-2021.2.0         | 183.8 MB  | #######2   |  72% mkl-2021.2.0         | 183.8 MB  | #######3   |  74% mkl-2021.2.0         | 183.8 MB  | #######5   |  75% mkl-2021.2.0         | 183.8 MB  | #######6   |  77% mkl-2021.2.0         | 183.8 MB  | #######8   |  79% mkl-2021.2.0         | 183.8 MB  | ########   |  80% mkl-2021.2.0         | 183.8 MB  | ########1  |  82% mkl-2021.2.0         | 183.8 MB  | ########3  |  83% mkl-2021.2.0         | 183.8 MB  | ########4  |  85% mkl-2021.2.0         | 183.8 MB  | ########6  |  86% mkl-2021.2.0         | 183.8 MB  | ########7  |  88% mkl-2021.2.0         | 183.8 MB  | ########9  |  89% mkl-2021.2.0         | 183.8 MB  | #########  |  91% mkl-2021.2.0         | 183.8 MB  | #########2 |  92% mkl-2021.2.0         | 183.8 MB  | #########4 |  94% mkl-2021.2.0         | 183.8 MB  | #########5 |  96% mkl-2021.2.0         | 183.8 MB  | #########7 |  97% mkl-2021.2.0         | 183.8 MB  | #########8 |  99% mkl-2021.2.0         | 183.8 MB  | ########## | 100% 
+"
+"1","Preparing transaction: ...working... done
+"
+"1","Verifying transaction: ...working... done
+"
+"1","Executing transaction: ...working... done
+"
+"1","#
+"
+"1","# To activate this environment, use
+"
+"1","#
+"
+"1","#     $ conda activate r-reticulate
+"
+"1","#
+"
+"1","# To deactivate an active environment, use
+"
+"1","#
+"
+"1","#     $ conda deactivate
+"
+"1","
+"
+"2","* Miniconda has been successfully installed at ""C:/Users/peter/AppData/Local/r-miniconda"".
+"
+"2","Error: Installation of TensorFlow not found.
+
+Python environments searched for 'tensorflow' package:
+ C:\Users\peter\AppData\Local\r-miniconda\envs\r-reticulate\python.exe
+
+You can install TensorFlow using the install_tensorflow() function.
+"
