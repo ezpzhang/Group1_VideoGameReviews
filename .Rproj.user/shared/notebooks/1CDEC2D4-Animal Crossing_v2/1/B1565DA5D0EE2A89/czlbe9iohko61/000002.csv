@@ -1,5 +1,0 @@
-"0","fituser.rf.pred <- predict(fituser.rf, user.reviewtree, type=""prob"")  # output the prob of ""0"" and ""1"""
-"0","fituser.rf.pred.y <- predict(fituser.rf, user.reviewtree, type=""response"") # majority vote"
-"0","fituser.rf.train.err <- mean(user.reviewtree$judgment != fituser.rf.pred.y) #training error =0"
-"0","fituser.rf.oob.err <- mean(user.reviewtree$judgment != fituser.rf$predicted) "
-"0","#Training error for the user random forest is 0.01134, testing misclassification error is 0.148"

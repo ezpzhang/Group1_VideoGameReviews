@@ -1,3 +1,0 @@
-"0","#Now we run the random forest models for the critic reviews with mtry = sqrt (427) ~ 20"
-"0","fitcritic.rf <- randomForest(judgment~., critic.reviewtree, mtry = 20, ntree = 500) #use mtry = 28 because there are 28^2 p's"
-"0","plot(fitcritic.rf)"

@@ -1,6 +1,0 @@
-"0","gooduser.word <- names(gooduser.fre)  # good words with a decreasing order in the coeff's"
-"0",""
-"0",""
-"0","coruser.special <- brewer.pal(8,""Dark2"")  # set up a pretty color scheme"
-"0","wordcloud(gooduser.word, gooduser.fre,  # make a word cloud"
-"0","          colors=coruser.special, ordered.colors=F)"

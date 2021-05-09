@@ -47,18 +47,6 @@
 "1","
 "
 "0","library(tm)"
-"2","package ‘tm’ was built under R version 4.0.5"
-"2","Loading required package: NLP
-"
-"2","
-Attaching package: ‘NLP’
-
-"
-"2","The following object is masked from ‘package:ggplot2’:
-
-    annotate
-
-"
 "0","criticcorpus1 <- VCorpus(VectorSource(critic.text))"
 "0","criticcorpus1"
 "1","<<VCorpus>>

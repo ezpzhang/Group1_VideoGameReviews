@@ -1,4 +1,0 @@
-"0",""
-"0","fit.usertree2 <- rpart(judgment~., user.reviewtree, minsplit = 1, cp = 9e-3)"
-"0","plot(as.party(fit.usertree2), main = ""Final Tree with Rpart"")"
-"0",""
